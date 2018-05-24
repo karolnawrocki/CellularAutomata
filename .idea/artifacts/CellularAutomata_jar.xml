@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="CellularAutomata:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/CellularAutomata_jar</output-path>
+    <root id="archive" name="CellularAutomata.jar">
+      <element id="module-output" name="CellularAutomata" />
+    </root>
+  </artifact>
+</component>

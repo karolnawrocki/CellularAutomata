@@ -9,8 +9,10 @@ import java.util.Vector;
 public class SeedGrowth extends CellularAutomaton {
     private Random random;
     private NeighborhoodType neighborhoodType;
+    private int numberOfSeeds;
     public SeedGrowth(int gridSize, int numberOfSeeds, NeighborhoodType neighborhoodType) {
         super(gridSize);
+        this.numberOfSeeds = numberOfSeeds;
         this.random = new Random();
         this.colorsArray = new Color[numberOfSeeds];
         this.neighborhoodType = neighborhoodType;
@@ -22,6 +24,13 @@ public class SeedGrowth extends CellularAutomaton {
             grid.getCell(row,column).setAlive(true);
             grid.getCell(row,column).setId(i);
         }
+    }
+    @Override
+    public String toString() {
+        return "Seed growth\n" +
+                "Grid size: " + this.gridSize + "\n" +
+                "Seeds: " + this.numberOfSeeds + "\n" +
+                "Neighbourhood: " + this.neighborhoodType;
     }
 
     @Override

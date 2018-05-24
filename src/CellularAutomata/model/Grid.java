@@ -15,6 +15,14 @@ public class Grid {
         }
     }
 
+    public void clear(){
+        for(int i = 0; i < width; i++){
+            for (int j = 0; j < height; j++) {
+                grid[i][j].setAlive(false);
+                grid[i][j].setId(0);
+            }
+        }
+    }
     public Cell getCell(int row, int column){
         return this.grid[row][column];
     }

@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import javax.swing.*;
@@ -23,7 +24,7 @@ public class Controller {
     @FXML
     private Slider speedSlider;
     @FXML
-    private ComboBox seedGrowthAlgorithmComboBox;
+    private ComboBox<NeighborhoodType> seedGrowthAlgorithmComboBox;
     @FXML
     private TextField gridSizeTextArea;
     @FXML
@@ -39,7 +40,9 @@ public class Controller {
     @FXML
     private Text speedPercentageText;
     @FXML
-    private ComboBox seedIdComboBox;
+    private ComboBox<Integer> seedIdComboBox;
+    @FXML
+    private CheckBox showCellIdCheckBox;
 
     private CellularAutomaton cellularAutomaton;
     private GraphicsContext gc;
@@ -55,10 +58,8 @@ public class Controller {
                 drawGrid(cellularAutomaton);
             }
         });
+
         speedPercentageText.setText(Integer.toString((int)speedSlider.getValue()) + "%");
-
-
-
 
         canvas.setOnMouseClicked((event) -> {
             int column = (int)(event.getX() / (canvas.getWidth() / cellularAutomaton.getGridSize()));
@@ -69,7 +70,7 @@ public class Controller {
             drawGrid(cellularAutomaton);
         });
 
-
+        showCellIdCheckBox.selectedProperty().addListener(e -> drawGrid(cellularAutomaton));
 
         speedSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             speedInMilliseconds = (int)((1 / newValue.doubleValue()) * 5000.0);
@@ -77,6 +78,7 @@ public class Controller {
             if(isAppRunning)
                 startDrawing();
         });
+
         for (NeighborhoodType neighborhoodType: NeighborhoodType.values()) {
             seedGrowthAlgorithmComboBox.getItems().add(neighborhoodType);
         }
@@ -86,37 +88,36 @@ public class Controller {
 
         gameOfLifeMenuItem.setOnAction(e->{
             cellularAutomaton = new GameOfLife(Integer.parseInt(gridSizeTextArea.getText()));
-            currentConfigurationText.setText(cellularAutomaton.toString());
-            drawGrid(cellularAutomaton);
+            loadCellularAutomatonData();
         });
+
         seedGrowthMenuItem.setOnAction(e->{
-            cellularAutomaton = new SeedGrowth(Integer.parseInt(gridSizeTextArea.getText()),Integer.parseInt(numberOfSeedsTextField.getText()),(NeighborhoodType)seedGrowthAlgorithmComboBox.getValue());
-
-            for(int i = 0; i < cellularAutomaton.getColorsArray().length; i++){
-                seedIdComboBox.getItems().add(i+1);
-            }
-            seedIdComboBox.getSelectionModel().select(0);
-
-            currentConfigurationText.setText(cellularAutomaton.toString());
-            drawGrid(cellularAutomaton);
+            cellularAutomaton = new SeedGrowth(Integer.parseInt(gridSizeTextArea.getText()),Integer.parseInt(numberOfSeedsTextField.getText()), seedGrowthAlgorithmComboBox.getValue());
+            loadCellularAutomatonData();
         });
+
         forestFireMenuItem.setOnAction(e->{
             cellularAutomaton = new ForestFire(Integer.parseInt(gridSizeTextArea.getText()),0.001, 0.0005);
-            currentConfigurationText.setText(cellularAutomaton.toString());
-            drawGrid(cellularAutomaton);
+            loadCellularAutomatonData();
         });
+
         cellularAutomaton = new GameOfLife(Integer.parseInt(gridSizeTextArea.getText()));
-        currentConfigurationText.setText(cellularAutomaton.toString());
+        loadCellularAutomatonData();
+    }
+
+    private void loadCellularAutomatonData(){
+        seedIdComboBox.getItems().clear();
         for(int i = 0; i < cellularAutomaton.getColorsArray().length; i++){
             seedIdComboBox.getItems().add(i+1);
         }
         seedIdComboBox.getSelectionModel().select(0);
+        currentConfigurationText.setText(cellularAutomaton.toString());
         drawGrid(cellularAutomaton);
     }
-
     @FXML
-    private void handleResetButtonAction(){
-
+    private void handleClearButtonAction(){
+        cellularAutomaton.getGrid().clear();
+        drawGrid(cellularAutomaton);
     }
 
     @FXML
@@ -148,7 +149,6 @@ public class Controller {
         }
     }
 
-
     private void drawGrid(CellularAutomaton cellularAutomaton){
         gc.clearRect(0,0,canvas.getWidth(),canvas.getHeight());
         double width = canvas.getWidth();
@@ -157,12 +157,22 @@ public class Controller {
         int columns = cellularAutomaton.getGrid(). getWidth();
         double cellWidth = width/columns;
         double cellHeight = height/rows;
+        gc.setFont(new Font(cellHeight/1.5));
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 Cell currentCell = cellularAutomaton.getGrid().getCell(i,j);
                 if(currentCell.isAlive()){
                     gc.setFill(cellularAutomaton.getColor(currentCell.getId()));
                     gc.fillRect(j * cellWidth+1,i * cellHeight+1,cellWidth-1,cellHeight-1);
+
+                    if(showCellIdCheckBox.isSelected()){
+                        double r = 1.0-cellularAutomaton.getColor(currentCell.getId()).getRed();
+                        double g = 1.0-cellularAutomaton.getColor(currentCell.getId()).getGreen();
+                        double b = 1.0-cellularAutomaton.getColor(currentCell.getId()).getBlue();
+                        Color oppositeColor = new Color(r,g,b,1.0);
+                        gc.setFill(oppositeColor);
+                        gc.fillText(String.valueOf(currentCell.getId() + 1),j * cellWidth+(cellWidth/2) - (gc.getFont().getSize()/4),i * cellHeight+(cellHeight/2) + (gc.getFont().getSize()/3));
+                    }
                 }
                 else if(!currentCell.isAlive()){
                     gc.setFill(Color.WHITE);

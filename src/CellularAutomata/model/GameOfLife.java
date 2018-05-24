@@ -7,7 +7,8 @@ import java.util.Vector;
 public class GameOfLife extends CellularAutomaton{
     @Override
     public String toString() {
-        return "Game of life, grid size: " + this.gridSize;
+        return "Game of life\n" +
+                "Grid size: " + this.gridSize;
     }
 
     public GameOfLife(int gridSize) {

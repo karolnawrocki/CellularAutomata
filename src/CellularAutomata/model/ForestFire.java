@@ -28,6 +28,14 @@ public class ForestFire extends CellularAutomaton{
     }
 
     @Override
+    public String toString() {
+        return "Forest fire\n" +
+                "Grid size: " + this.gridSize + "\n" +
+                "New tree chance: " + this.newTreeChance + "\n" +
+                "Tree ignition chance: " + this.lightningChance;
+    }
+
+    @Override
     public void calculateNextStep() {
         iterations++;
         for (int i = 0; i < this.gridSize; i++) {
