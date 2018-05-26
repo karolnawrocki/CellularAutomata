@@ -13,6 +13,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
+import java.util.Vector;
 
 public class Controller {
     @FXML
@@ -32,8 +36,8 @@ public class Controller {
     @FXML
     private MenuItem seedGrowthMenuItem;
     @FXML
-    private MenuItem forestFireMenuItem;
-    @FXML
+//    private MenuItem forestFireMenuItem;
+//    @FXML
     private TextField numberOfSeedsTextField;
     @FXML
     private Text currentConfigurationText;
@@ -43,6 +47,10 @@ public class Controller {
     private ComboBox<Integer> seedIdComboBox;
     @FXML
     private CheckBox showCellIdCheckBox;
+    @FXML
+    private TextField radiusTextField;
+    @FXML
+    private Button radiusDistributionButton;
 
     private CellularAutomaton cellularAutomaton;
     private GraphicsContext gc;
@@ -87,7 +95,7 @@ public class Controller {
         gc = canvas.getGraphicsContext2D();
 
         gameOfLifeMenuItem.setOnAction(e->{
-            cellularAutomaton = new GameOfLife(Integer.parseInt(gridSizeTextArea.getText()));
+            cellularAutomaton = new GameOfLife(Integer.parseInt(gridSizeTextArea.getText()), seedGrowthAlgorithmComboBox.getValue());
             loadCellularAutomatonData();
         });
 
@@ -96,12 +104,12 @@ public class Controller {
             loadCellularAutomatonData();
         });
 
-        forestFireMenuItem.setOnAction(e->{
-            cellularAutomaton = new ForestFire(Integer.parseInt(gridSizeTextArea.getText()),0.001, 0.0005);
-            loadCellularAutomatonData();
-        });
+//        forestFireMenuItem.setOnAction(e->{
+//            cellularAutomaton = new ForestFire(Integer.parseInt(gridSizeTextArea.getText()),0.001, 0.0005);
+//            loadCellularAutomatonData();
+//        });
 
-        cellularAutomaton = new GameOfLife(Integer.parseInt(gridSizeTextArea.getText()));
+        cellularAutomaton = new SeedGrowth(Integer.parseInt(gridSizeTextArea.getText()),Integer.parseInt(numberOfSeedsTextField.getText()), NeighborhoodType.MoorePeriodic);
         loadCellularAutomatonData();
     }
 
@@ -114,6 +122,48 @@ public class Controller {
         currentConfigurationText.setText(cellularAutomaton.toString());
         drawGrid(cellularAutomaton);
     }
+
+    @FXML
+    private void handleRadiusSeedDistribution(){
+        cellularAutomaton.getGrid().clear();
+        int numberOfSeeds = Integer.parseInt(numberOfSeedsTextField.getText());
+        double radius = Double.parseDouble(radiusTextField.getText());
+        Vector<Cell> availableCells = new Vector<>();
+        for(int i = 0; i < cellularAutomaton.getGridSize(); i++){
+            for (int j = 0; j < cellularAutomaton.getGridSize(); j++) {
+                availableCells.add(cellularAutomaton.getGrid().getCell(i,j));
+            }
+        }
+        double x1,x2,y1,y2;
+        Collections.shuffle(availableCells);
+        Vector<Cell> cellsToRemove = new Vector<>();
+        for (int i = 0; i < numberOfSeeds; i++) {
+            if(availableCells.isEmpty()){
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Warning");
+                alert.setHeaderText(numberOfSeeds - i + " seeds weren't placed: no cell available");
+                alert.show();
+                break;
+            }
+            Cell currentCell = availableCells.lastElement();
+            availableCells.remove(currentCell);
+            x2 = currentCell.getColumn() + 0.5;
+            y2 = currentCell.getRow() + 0.5;
+            for(Cell cell: availableCells){
+                x1 = cell.getColumn() + 0.5;
+                y1 = cell.getRow() + 0.5;
+                if(Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)) < radius){
+                    cellsToRemove.add(cell);
+                }
+            }
+            availableCells.removeAll(cellsToRemove);
+            cellsToRemove.removeAllElements();
+            cellularAutomaton.getGrid().getCell(currentCell.getRow(),currentCell.getColumn()).setAlive(true);
+            cellularAutomaton.getGrid().getCell(currentCell.getRow(),currentCell.getColumn()).setId(i);
+        }
+        drawGrid(cellularAutomaton);
+    }
+
     @FXML
     private void handleClearButtonAction(){
         cellularAutomaton.getGrid().clear();
@@ -150,7 +200,7 @@ public class Controller {
     }
 
     private void drawGrid(CellularAutomaton cellularAutomaton){
-        gc.clearRect(0,0,canvas.getWidth(),canvas.getHeight());
+        //gc.clearRect(0,0,canvas.getWidth(),canvas.getHeight());
         double width = canvas.getWidth();
         double height = canvas.getHeight();
         int rows = cellularAutomaton.getGrid().getHeight();
@@ -164,7 +214,6 @@ public class Controller {
                 if(currentCell.isAlive()){
                     gc.setFill(cellularAutomaton.getColor(currentCell.getId()));
                     gc.fillRect(j * cellWidth+1,i * cellHeight+1,cellWidth-1,cellHeight-1);
-
                     if(showCellIdCheckBox.isSelected()){
                         double r = 1.0-cellularAutomaton.getColor(currentCell.getId()).getRed();
                         double g = 1.0-cellularAutomaton.getColor(currentCell.getId()).getGreen();

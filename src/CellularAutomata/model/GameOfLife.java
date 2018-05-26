@@ -5,30 +5,19 @@ import javafx.scene.paint.Color;
 import java.util.Vector;
 
 public class GameOfLife extends CellularAutomaton{
+    private NeighborhoodType neighborhoodType;
     @Override
     public String toString() {
         return "Game of life\n" +
-                "Grid size: " + this.gridSize;
+                "Grid size: " + this.gridSize+"\n"+
+                "Neighbourhood: " + this.neighborhoodType;
     }
 
-    public GameOfLife(int gridSize) {
+    public GameOfLife(int gridSize, NeighborhoodType neighborhoodType) {
         super(gridSize);
         this.colorsArray = new Color[1];
         this.colorsArray[0] = Color.RED;
-//        grid.getCell(0,3).setAlive(true);
-//        grid.getCell(1,4).setAlive(true);
-//        grid.getCell(2,2).setAlive(true);
-//        grid.getCell(2,3).setAlive(true);
-//        grid.getCell(2,4).setAlive(true);
-//
-//        grid.getCell(8,2).setAlive(true);
-//        grid.getCell(9,2).setAlive(true);
-//        grid.getCell(10,2).setAlive(true);
-//
-//        grid.getCell(2,11).setAlive(true);
-//        grid.getCell(2,12).setAlive(true);
-//        grid.getCell(1,11).setAlive(true);
-//        grid.getCell(1,12).setAlive(true);
+        this.neighborhoodType = neighborhoodType;
     }
 
     @Override
@@ -36,7 +25,18 @@ public class GameOfLife extends CellularAutomaton{
         iterations++;
         for (int i = 0; i < this.gridSize; i++) {
             for (int j = 0; j < this.gridSize; j++) {
-                Vector<Cell> neighboursArray = grid.getCell(i,j).getNeighboursMoorePeriodic();
+                Cell currentCell = grid.getCell(i, j);
+                Vector<Cell> neighboursArray;
+                switch(neighborhoodType) {
+                    case MoorePeriodic:
+                        neighboursArray = currentCell.getNeighboursMoorePeriodic();
+                        break;
+                    case MooreNonperiodic:
+                        neighboursArray = currentCell.getNeighboursMooreNonperiodic();
+                        break;
+                    default:
+                        neighboursArray = currentCell.getNeighboursMoorePeriodic();
+                }
                 int numberOfNeighbours = neighboursArray.size();
                 if(grid.getCell(i,j).isAlive()){
                     if(numberOfNeighbours == 2 || numberOfNeighbours == 3){

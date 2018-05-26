@@ -19,6 +19,7 @@ public class MainApp extends Application {
         primaryStage.setTitle("CA");
         primaryStage.setResizable(false);
         primaryStage.setScene(new Scene(root, 1000, 720));
+        //primaryStage.setFullScreen(true);
         primaryStage.show();
     }
 

@@ -17,6 +17,7 @@ public class SeedGrowth extends CellularAutomaton {
         this.colorsArray = new Color[numberOfSeeds];
         this.neighborhoodType = neighborhoodType;
         int column, row;
+
         for(int i = 0; i < numberOfSeeds; i++){
             colorsArray[i] = new Color(random.nextDouble(),random.nextDouble(),random.nextDouble(),1.0);
             row = random.nextInt(gridSize);
@@ -40,9 +41,6 @@ public class SeedGrowth extends CellularAutomaton {
             for (int j = 0; j < this.gridSize; j++) {
                 Cell currentCell = grid.getCell(i, j);
                 Vector<Cell> neighboursArray;
-
-                //NeighborhoodType neighborhoodType = (NeighborhoodType)seedGrowthAlgorithmComboBox.getValue();
-
                 switch(neighborhoodType){
                     case VonNeumannPeriodic:
                         neighboursArray = currentCell.getNeighboursVonNeumannPeriodic();
