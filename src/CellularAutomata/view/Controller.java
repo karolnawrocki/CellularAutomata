@@ -13,9 +13,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 import java.util.Vector;
 
 public class Controller {
@@ -49,8 +47,6 @@ public class Controller {
     private CheckBox showCellIdCheckBox;
     @FXML
     private TextField radiusTextField;
-    @FXML
-    private Button radiusDistributionButton;
 
     private CellularAutomaton cellularAutomaton;
     private GraphicsContext gc;
@@ -64,6 +60,13 @@ public class Controller {
             if(event.getCode() == KeyCode.N){
                 cellularAutomaton.calculateNextStep();
                 drawGrid(cellularAutomaton);
+            }
+        });
+
+        numberOfSeedsTextField.textProperty().addListener((observable, oldValue, newValue) ->{
+            if(newValue.matches("\\d+")){
+                cellularAutomaton = new SeedGrowth(Integer.parseInt(gridSizeTextArea.getText()),Integer.parseInt(numberOfSeedsTextField.getText()), seedGrowthAlgorithmComboBox.getValue());
+                loadCellularAutomatonData();
             }
         });
 
@@ -91,6 +94,10 @@ public class Controller {
             seedGrowthAlgorithmComboBox.getItems().add(neighborhoodType);
         }
         seedGrowthAlgorithmComboBox.getSelectionModel().select(0);
+        seedGrowthAlgorithmComboBox.valueProperty().addListener((observable, oldValue, newValue)->{
+            cellularAutomaton = new SeedGrowth(Integer.parseInt(gridSizeTextArea.getText()),Integer.parseInt(numberOfSeedsTextField.getText()), newValue);
+            loadCellularAutomatonData();
+        });
 
         gc = canvas.getGraphicsContext2D();
 
@@ -158,6 +165,70 @@ public class Controller {
             }
             availableCells.removeAll(cellsToRemove);
             cellsToRemove.removeAllElements();
+            cellularAutomaton.getGrid().getCell(currentCell.getRow(),currentCell.getColumn()).setAlive(true);
+            cellularAutomaton.getGrid().getCell(currentCell.getRow(),currentCell.getColumn()).setId(i);
+        }
+        drawGrid(cellularAutomaton);
+    }
+
+    @FXML
+    private void handleEqualSeedDistribution(){
+        cellularAutomaton.getGrid().clear();
+        int numberOfSeeds = Integer.parseInt(numberOfSeedsTextField.getText());
+        double radius = 0.9;
+        Vector<Cell> finalVectorOfSeeds = new Vector<>();
+        Vector<Cell> currentVectorOfSeeds = new Vector<>();
+        double x1,x2,y1,y2;
+        Vector<Cell> availableCells;
+        Vector<Cell> cellsToRemove = new Vector<>();
+        boolean loopBroken = false;
+        while(true){
+            availableCells = new Vector<>();
+            for(int i = 0; i < cellularAutomaton.getGridSize(); i++){
+                for (int j = 0; j < cellularAutomaton.getGridSize(); j++) {
+                    availableCells.add(cellularAutomaton.getGrid().getCell(i,j));
+                }
+            }
+            int borderToRemove = (int)(radius/1.5 - 0.5);
+            Vector<Cell> borderCellsToRemove = new Vector<>();
+            for(Cell c: availableCells){
+                if(c.getRow() < borderToRemove
+                        || c.getColumn() < borderToRemove
+                        || cellularAutomaton.getGridSize() - c.getRow() <= borderToRemove
+                        || cellularAutomaton.getGridSize() - c.getColumn() <= borderToRemove){
+                    borderCellsToRemove.add(c);
+                }
+            }
+            availableCells.removeAll(borderCellsToRemove);
+            Collections.shuffle(availableCells);
+            for (int i = 0; i < numberOfSeeds; i++) {
+            if(availableCells.isEmpty()){
+                loopBroken = true;
+                break;
+            }
+                Cell currentCell = availableCells.lastElement();
+                availableCells.remove(currentCell);
+                x2 = currentCell.getColumn() + 0.5;
+                y2 = currentCell.getRow() + 0.5;
+                for(Cell c: availableCells){
+                    x1 = c.getColumn() + 0.5;
+                    y1 = c.getRow() + 0.5;
+                    if(Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)) < radius)
+                        cellsToRemove.add(c);
+                }
+                availableCells.removeAll(cellsToRemove);
+                cellsToRemove.removeAllElements();
+                currentVectorOfSeeds.add(currentCell);
+            }
+            if(loopBroken)
+                break;
+            radius += 0.1;
+            finalVectorOfSeeds.removeAllElements();
+            finalVectorOfSeeds.addAll(currentVectorOfSeeds);
+            currentVectorOfSeeds.removeAllElements();
+        }
+        for (int i = 0; i < finalVectorOfSeeds.size(); i++) {
+            Cell currentCell = finalVectorOfSeeds.get(i);
             cellularAutomaton.getGrid().getCell(currentCell.getRow(),currentCell.getColumn()).setAlive(true);
             cellularAutomaton.getGrid().getCell(currentCell.getRow(),currentCell.getColumn()).setId(i);
         }

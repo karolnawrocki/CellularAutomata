@@ -16,16 +16,22 @@ public class SeedGrowth extends CellularAutomaton {
         this.random = new Random();
         this.colorsArray = new Color[numberOfSeeds];
         this.neighborhoodType = neighborhoodType;
-        int column, row;
-
-        for(int i = 0; i < numberOfSeeds; i++){
+        Vector<Cell> availableCells = new Vector<>();
+        if(numberOfSeeds > gridSize * gridSize)
+            this.numberOfSeeds = gridSize * gridSize;
+        for (int i = 0; i < gridSize; i++) {
+            for (int j = 0; j < gridSize; j++) {
+                availableCells.add(grid.getCell(i,j));
+            }
+        }
+        Collections.shuffle(availableCells);
+        for(int i = 0; i < this.numberOfSeeds; i++){
+            availableCells.get(i).setAlive(true);
+            availableCells.get(i).setId(i);
             colorsArray[i] = new Color(random.nextDouble(),random.nextDouble(),random.nextDouble(),1.0);
-            row = random.nextInt(gridSize);
-            column = random.nextInt(gridSize);
-            grid.getCell(row,column).setAlive(true);
-            grid.getCell(row,column).setId(i);
         }
     }
+
     @Override
     public String toString() {
         return "Seed growth\n" +
