@@ -13,6 +13,10 @@ public class GameOfLife extends CellularAutomaton{
                 "Neighbourhood: " + this.neighborhoodType;
     }
 
+    public GameOfLife() {
+        super(0);
+    }
+
     public GameOfLife(int gridSize, NeighborhoodType neighborhoodType) {
         super(gridSize);
         this.colorsArray = new Color[1];

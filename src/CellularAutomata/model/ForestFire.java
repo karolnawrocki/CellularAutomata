@@ -9,6 +9,11 @@ public class ForestFire extends CellularAutomaton{
     private Random random;
     private double newTreeChance;
     private double lightningChance;
+
+    public ForestFire() {
+        super(0);
+    }
+
     public ForestFire(int gridSize, double newTreeChance, double lightningChance) {
         super(gridSize);
         for (int i = 0; i < this.gridSize; i++) {

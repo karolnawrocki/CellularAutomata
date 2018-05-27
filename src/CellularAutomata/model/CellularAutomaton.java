@@ -22,6 +22,11 @@ public abstract class CellularAutomaton{
     public Color getColor(int id){
         return this.colorsArray[id];
     }
+
+    public long getIterations() {
+        return iterations;
+    }
+
     public Color[] getColorsArray() {
         return colorsArray;
     }

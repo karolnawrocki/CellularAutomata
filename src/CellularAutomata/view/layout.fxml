@@ -10,40 +10,45 @@
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Text?>
 
 <AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CellularAutomata.view.Controller">
    <children>
-      <Button fx:id="startButton" layoutX="794.0" layoutY="202.0" mnemonicParsing="false" onAction="#handleStartButtonAction" prefHeight="69.0" prefWidth="191.0" text="Start" />
+      <Button fx:id="startButton" layoutX="702.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleStartButtonAction" prefHeight="69.0" prefWidth="285.0" text="Start" />
       <Canvas fx:id="canvas" height="680.0" layoutX="14.0" layoutY="14.0" width="680.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="290.0" AnchorPane.topAnchor="30.0" />
-      <Slider fx:id="speedSlider" layoutX="795.0" layoutY="47.0" min="10.0" prefHeight="14.0" prefWidth="191.0" value="40.0" />
-      <ComboBox fx:id="seedGrowthAlgorithmComboBox" layoutX="795.0" layoutY="12.0" prefHeight="25.0" prefWidth="191.0" />
-      <TextField fx:id="gridSizeTextArea" layoutX="795.0" layoutY="78.0" prefHeight="25.0" prefWidth="48.0" text="20" />
+      <Slider fx:id="speedSlider" layoutX="795.0" layoutY="122.0" min="10.0" prefHeight="14.0" prefWidth="191.0" value="40.0" />
+      <TextField fx:id="gridSizeTextArea" layoutX="795.0" layoutY="153.0" prefHeight="25.0" prefWidth="65.0" text="300" />
       <MenuBar>
          <menus>
             <Menu mnemonicParsing="false" text="CA">
                <items>
                   <MenuItem fx:id="gameOfLifeMenuItem" mnemonicParsing="false" text="Game Of Life" />
                   <MenuItem fx:id="seedGrowthMenuItem" mnemonicParsing="false" text="Seed Growth" />
-                  <!---<MenuItem fx:id="forestFireMenuItem" mnemonicParsing="false" text="Forest Fire" /> -->
+                  <MenuItem fx:id="forestFireMenuItem" mnemonicParsing="false" text="Forest Fire" />
                </items>
             </Menu>
          </menus>
       </MenuBar>
-      <Text layoutX="702.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Neighbourhood:" />
-      <Text layoutX="724.0" layoutY="59.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Speed:" />
-      <Text layoutX="742.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Grid size:" />
-      <TextField fx:id="numberOfSeedsTextField" layoutX="938.0" layoutY="78.0" prefHeight="25.0" prefWidth="48.0" text="9" />
-      <Text layoutX="897.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Seeds:" />
-      <Button layoutX="941.0" layoutY="161.0" mnemonicParsing="false" onAction="#handleClearButtonAction" text="Clear" />
-      <Text fx:id="currentConfigurationText" layoutX="795.0" layoutY="365.0" strokeType="OUTSIDE" strokeWidth="0.0" text="current config" wrappingWidth="191.00001454353333" />
-      <Text fx:id="speedPercentageText" layoutX="766.0" layoutY="59.0" strokeType="OUTSIDE" strokeWidth="0.0" text="xx%" />
-      <ComboBox fx:id="seedIdComboBox" layoutX="794.0" layoutY="114.0" prefHeight="25.0" prefWidth="191.0" />
-      <Text layoutX="745.0" layoutY="131.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Seed id:" />
-      <CheckBox fx:id="showCellIdCheckBox" layoutX="794.0" layoutY="165.0" mnemonicParsing="false" text="Show cell ID" />
-      <TextField fx:id="radiusTextField" layoutX="837.0" layoutY="285.0" prefHeight="25.0" prefWidth="36.0" text="5.0" />
-      <Text layoutX="795.0" layoutY="302.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Radius:" />
-      <Button layoutX="880.0" layoutY="285.0" mnemonicParsing="false" onAction="#handleRadiusSeedDistribution" text="Distribute seeds" />
-      <Button layoutX="793.0" layoutY="318.0" mnemonicParsing="false" onAction="#handleEqualSeedDistribution" text="Distribute seeds equally" />
+      <Text layoutX="724.0" layoutY="134.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Speed:" />
+      <Text layoutX="742.0" layoutY="170.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Grid size:" />
+      <Button layoutX="892.0" layoutY="153.0" mnemonicParsing="false" onAction="#handleClearButtonAction" prefHeight="25.0" prefWidth="88.0" text="Clear grid" />
+      <Text fx:id="currentConfigurationText" layoutX="702.0" layoutY="389.0" strokeType="OUTSIDE" strokeWidth="0.0" text="current config" wrappingWidth="191.00001454353333" />
+      <Text fx:id="speedPercentageText" layoutX="766.0" layoutY="134.0" strokeType="OUTSIDE" strokeWidth="0.0" text="xx%" />
+      <Pane fx:id="seedGrowthPane" layoutX="652.0" layoutY="178.0" prefHeight="191.0" prefWidth="328.0">
+         <children>
+            <TextField fx:id="numberOfSeedsTextField" layoutX="153.0" layoutY="14.0" prefHeight="25.0" prefWidth="48.0" text="9" />
+            <Text layoutX="113.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Seeds:" />
+            <ComboBox fx:id="seedIdComboBox" layoutX="262.0" layoutY="14.0" prefHeight="25.0" prefWidth="42.0" />
+            <Text layoutX="213.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Seed id:" />
+            <Text layoutX="111.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Radius:" />
+            <TextField fx:id="radiusTextField" layoutX="153.0" layoutY="53.0" prefHeight="25.0" prefWidth="42.0" text="5.0" />
+            <Button layoutX="212.0" layoutY="53.0" mnemonicParsing="false" onAction="#handleRadiusSeedDistribution" text="Distribute seeds" />
+            <Button layoutX="153.0" layoutY="89.0" mnemonicParsing="false" onAction="#handleEqualSeedDistribution" prefHeight="25.0" prefWidth="161.0" text="Distribute seeds equally" />
+            <CheckBox fx:id="showCellIdCheckBox" layoutX="221.0" layoutY="131.0" mnemonicParsing="false" text="Show seed ID" />
+            <ComboBox fx:id="seedGrowthAlgorithmComboBox" layoutX="143.0" layoutY="157.0" prefHeight="25.0" prefWidth="174.0" />
+            <Text layoutX="48.0" layoutY="174.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Neighbourhood:" />
+         </children>
+      </Pane>
    </children>
 </AnchorPane>

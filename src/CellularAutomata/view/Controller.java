@@ -8,6 +8,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -34,8 +35,8 @@ public class Controller {
     @FXML
     private MenuItem seedGrowthMenuItem;
     @FXML
-//    private MenuItem forestFireMenuItem;
-//    @FXML
+    private MenuItem forestFireMenuItem;
+    @FXML
     private TextField numberOfSeedsTextField;
     @FXML
     private Text currentConfigurationText;
@@ -47,6 +48,8 @@ public class Controller {
     private CheckBox showCellIdCheckBox;
     @FXML
     private TextField radiusTextField;
+    @FXML
+    private Pane seedGrowthPane;
 
     private CellularAutomaton cellularAutomaton;
     private GraphicsContext gc;
@@ -65,14 +68,12 @@ public class Controller {
 
         numberOfSeedsTextField.textProperty().addListener((observable, oldValue, newValue) ->{
             if(newValue.matches("\\d+")){
-                cellularAutomaton = new SeedGrowth(Integer.parseInt(gridSizeTextArea.getText()),Integer.parseInt(numberOfSeedsTextField.getText()), seedGrowthAlgorithmComboBox.getValue());
                 loadCellularAutomatonData();
             }
         });
 
         gridSizeTextArea.textProperty().addListener((observable,oldValue,newValue) -> {
             if(newValue.matches("\\d+")){
-                cellularAutomaton = new SeedGrowth(Integer.parseInt(gridSizeTextArea.getText()),Integer.parseInt(numberOfSeedsTextField.getText()), seedGrowthAlgorithmComboBox.getValue());
                 loadCellularAutomatonData();
             }
         });
@@ -109,25 +110,37 @@ public class Controller {
         gc = canvas.getGraphicsContext2D();
 
         gameOfLifeMenuItem.setOnAction(e->{
-            cellularAutomaton = new GameOfLife(Integer.parseInt(gridSizeTextArea.getText()), seedGrowthAlgorithmComboBox.getValue());
+            cellularAutomaton = new GameOfLife();
             loadCellularAutomatonData();
         });
 
         seedGrowthMenuItem.setOnAction(e->{
-            cellularAutomaton = new SeedGrowth(Integer.parseInt(gridSizeTextArea.getText()),Integer.parseInt(numberOfSeedsTextField.getText()), seedGrowthAlgorithmComboBox.getValue());
+            cellularAutomaton = new SeedGrowth();
             loadCellularAutomatonData();
         });
 
-//        forestFireMenuItem.setOnAction(e->{
-//            cellularAutomaton = new ForestFire(Integer.parseInt(gridSizeTextArea.getText()),0.001, 0.0005);
-//            loadCellularAutomatonData();
-//        });
+        forestFireMenuItem.setOnAction(e->{
+            cellularAutomaton = new ForestFire();
+            loadCellularAutomatonData();
+        });
 
         cellularAutomaton = new SeedGrowth(Integer.parseInt(gridSizeTextArea.getText()),Integer.parseInt(numberOfSeedsTextField.getText()), NeighborhoodType.MoorePeriodic);
         loadCellularAutomatonData();
     }
 
     private void loadCellularAutomatonData(){
+        if(cellularAutomaton.getClass() == GameOfLife.class){
+            seedGrowthPane.setVisible(false);
+            cellularAutomaton = new GameOfLife(Integer.parseInt(gridSizeTextArea.getText()), NeighborhoodType.MoorePeriodic);
+        }
+        else if(cellularAutomaton.getClass() == SeedGrowth.class){
+            seedGrowthPane.setVisible(true);
+            cellularAutomaton = new SeedGrowth(Integer.parseInt(gridSizeTextArea.getText()),Integer.parseInt(numberOfSeedsTextField.getText()), seedGrowthAlgorithmComboBox.getValue());
+        }
+        else if(cellularAutomaton.getClass() == ForestFire.class){
+            seedGrowthPane.setVisible(false);
+            cellularAutomaton = new ForestFire(Integer.parseInt(gridSizeTextArea.getText()),0.001, 0.0005);
+        }
         seedIdComboBox.getItems().clear();
         for(int i = 0; i < cellularAutomaton.getColorsArray().length; i++){
             seedIdComboBox.getItems().add(i+1);
@@ -277,28 +290,34 @@ public class Controller {
         }
     }
 
+    private Color getOppositeColor(Color color){
+        double r = 1.0 - color.getRed();
+        double g = 1.0 - color.getGreen();
+        double b = 1.0 - color.getBlue();
+        return new Color(r,g,b,1.0);
+    }
+
     private void drawGrid(CellularAutomaton cellularAutomaton){
-        //gc.clearRect(0,0,canvas.getWidth(),canvas.getHeight());
+        if(cellularAutomaton.getIterations() % 30 == 0)
+            gc.clearRect(0,0,canvas.getWidth(),canvas.getHeight());
         double width = canvas.getWidth();
         double height = canvas.getHeight();
         int rows = cellularAutomaton.getGrid().getHeight();
-        int columns = cellularAutomaton.getGrid(). getWidth();
-        double cellWidth = width/columns;
-        double cellHeight = height/rows;
-        gc.setFont(new Font(cellHeight/1.5));
+        int columns = cellularAutomaton.getGrid().getWidth();
+        double cellWidth = width / columns;
+        double cellHeight = height / rows;
+        gc.setFont(new Font(cellHeight / 1.5));
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                Cell currentCell = cellularAutomaton.getGrid().getCell(i,j);
+                Cell currentCell = cellularAutomaton.getGrid().getCell(i, j);
                 if(currentCell.isAlive()){
                     gc.setFill(cellularAutomaton.getColor(currentCell.getId()));
-                    gc.fillRect(j * cellWidth+1,i * cellHeight+1,cellWidth-1,cellHeight-1);
+                    gc.fillRect(j * cellWidth+1,i * cellHeight+1, cellWidth, cellHeight);
                     if(showCellIdCheckBox.isSelected()){
-                        double r = 1.0-cellularAutomaton.getColor(currentCell.getId()).getRed();
-                        double g = 1.0-cellularAutomaton.getColor(currentCell.getId()).getGreen();
-                        double b = 1.0-cellularAutomaton.getColor(currentCell.getId()).getBlue();
-                        Color oppositeColor = new Color(r,g,b,1.0);
-                        gc.setFill(oppositeColor);
-                        gc.fillText(String.valueOf(currentCell.getId() + 1),j * cellWidth+(cellWidth/2) - (gc.getFont().getSize()/4),i * cellHeight+(cellHeight/2) + (gc.getFont().getSize()/3));
+                        gc.setFill(getOppositeColor(cellularAutomaton.getColor(currentCell.getId())));
+                        gc.fillText(String.valueOf(currentCell.getId() + 1),
+                                j * cellWidth + (cellWidth / 2) - (gc.getFont().getSize() / 4),
+                                i * cellHeight + (cellHeight / 2) + (gc.getFont().getSize() / 3));
                     }
                 }
                 else if(!currentCell.isAlive()){
@@ -307,11 +326,11 @@ public class Controller {
                 }
             }
         }
-        for (int i = 0; i < rows+1; i++) {
-            gc.strokeLine(0, i * cellHeight,width,i * cellHeight);
-        }
-        for (int i = 0; i < columns+1; i++) {
-            gc.strokeLine(i * cellWidth, 0,i *cellWidth,height);
-        }
+//        for (int i = 0; i < rows+1; i++) {
+//            gc.strokeLine(0, i * cellHeight,width,i * cellHeight);
+//        }
+//        for (int i = 0; i < columns+1; i++) {
+//            gc.strokeLine(i * cellWidth, 0,i *cellWidth,height);
+//        }
     }
 }

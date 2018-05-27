@@ -10,6 +10,11 @@ public class SeedGrowth extends CellularAutomaton {
     private Random random;
     private NeighborhoodType neighborhoodType;
     private int numberOfSeeds;
+
+    public SeedGrowth() {
+        super(0);
+    }
+
     public SeedGrowth(int gridSize, int numberOfSeeds, NeighborhoodType neighborhoodType) {
         super(gridSize);
         this.numberOfSeeds = numberOfSeeds;
