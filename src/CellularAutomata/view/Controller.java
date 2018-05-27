@@ -70,6 +70,13 @@ public class Controller {
             }
         });
 
+        gridSizeTextArea.textProperty().addListener((observable,oldValue,newValue) -> {
+            if(newValue.matches("\\d+")){
+                cellularAutomaton = new SeedGrowth(Integer.parseInt(gridSizeTextArea.getText()),Integer.parseInt(numberOfSeedsTextField.getText()), seedGrowthAlgorithmComboBox.getValue());
+                loadCellularAutomatonData();
+            }
+        });
+
         speedPercentageText.setText(Integer.toString((int)speedSlider.getValue()) + "%");
 
         canvas.setOnMouseClicked((event) -> {

@@ -78,12 +78,36 @@ public class SeedGrowth extends CellularAutomaton {
                     case HexagonalRandomNonperiodic:
                         neighboursArray = currentCell.getNeighboursHexagonalRandomNonperiodic();
                         break;
-//                        case PentagonalRandomPeriodic:
-//
-//                            break;
-//                        case PentagonalRandomNonperiodic:
-//
-//                            break;
+                    case PentagonalUpperLeftPeriodic:
+                        neighboursArray = currentCell.getNeighboursPentagonalUpperLeftPeriodic();
+                        break;
+                    case PentagonalUpperRightPeriodic:
+                        neighboursArray = currentCell.getNeighboursPentagonalUpperRightPeriodic();
+                        break;
+                    case PentagonalBottomLeftPeriodic:
+                        neighboursArray = currentCell.getNeighboursPentagonalBottomLeftPeriodic();
+                        break;
+                    case PentagonalBottomRightPeriodic:
+                        neighboursArray = currentCell.getNeighboursPentagonalBottomRightPeriodic();
+                        break;
+                    case PentagonalRandomPeriodic:
+                        neighboursArray = currentCell.getNeighboursPentagonalRandomPeriodic();
+                        break;
+                    case PentagonalUpperLeftNonperiodic:
+                        neighboursArray = currentCell.getNeighboursPentagonalUpperLeftNonperiodic();
+                        break;
+                    case PentagonalUpperRightNonperiodic:
+                        neighboursArray = currentCell.getNeighboursPentagonalUpperRightNonperiodic();
+                        break;
+                    case PentagonalBottomLeftNonperiodic:
+                        neighboursArray = currentCell.getNeighboursPentagonalBottomLeftNonperiodic();
+                        break;
+                    case PentagonalBottomRightNonperiodic:
+                        neighboursArray = currentCell.getNeighboursPentagonalBottomRightNonperiodic();
+                        break;
+                    case PentagonalRandomNonperiodic:
+                        neighboursArray = currentCell.getNeighboursPentagonalRandomNonperiodic();
+                        break;
                     default:
                         neighboursArray = currentCell.getNeighboursMooreNonperiodic();
 
