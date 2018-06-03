@@ -195,7 +195,9 @@ public class Controller {
     private void handleEqualSeedDistribution(){
         cellularAutomaton.getGrid().clear();
         int numberOfSeeds = Integer.parseInt(numberOfSeedsTextField.getText());
-        double radius = 0.9;
+        double gridArea = cellularAutomaton.getGridSize() * cellularAutomaton.getGridSize();
+        double radius = Math.sqrt((1.6 * gridArea) / (Math.PI * numberOfSeeds));
+        double radiusStep = 0.2;
         Vector<Cell> finalVectorOfSeeds = new Vector<>();
         Vector<Cell> currentVectorOfSeeds = new Vector<>();
         double x1,x2,y1,y2;
@@ -242,7 +244,7 @@ public class Controller {
             }
             if(loopBroken)
                 break;
-            radius += 0.1;
+            radius += radiusStep;
             finalVectorOfSeeds.removeAllElements();
             finalVectorOfSeeds.addAll(currentVectorOfSeeds);
             currentVectorOfSeeds.removeAllElements();
