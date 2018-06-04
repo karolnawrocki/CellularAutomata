@@ -45,9 +45,10 @@
             <TextField fx:id="radiusTextField" layoutX="153.0" layoutY="53.0" prefHeight="25.0" prefWidth="42.0" text="5.0" />
             <Button layoutX="212.0" layoutY="53.0" mnemonicParsing="false" onAction="#handleRadiusSeedDistribution" text="Distribute seeds" />
             <Button layoutX="153.0" layoutY="89.0" mnemonicParsing="false" onAction="#handleEqualSeedDistribution" prefHeight="25.0" prefWidth="161.0" text="Distribute seeds equally" />
-            <CheckBox fx:id="showCellIdCheckBox" layoutX="221.0" layoutY="131.0" mnemonicParsing="false" text="Show seed ID" />
+            <CheckBox fx:id="showCellIdCheckBox" layoutX="246.0" layoutY="131.0" mnemonicParsing="false" text="seed IDs" />
             <ComboBox fx:id="seedGrowthAlgorithmComboBox" layoutX="143.0" layoutY="157.0" prefHeight="25.0" prefWidth="174.0" />
             <Text layoutX="48.0" layoutY="174.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Neighbourhood:" />
+            <CheckBox fx:id="gridLinesCheckBox" layoutX="153.0" layoutY="131.0" mnemonicParsing="false" text="grid lines" selected="true" />
          </children>
       </Pane>
    </children>

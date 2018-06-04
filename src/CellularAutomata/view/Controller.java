@@ -13,9 +13,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-import javax.swing.*;
 import java.util.Collections;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Controller {
     @FXML
@@ -50,12 +51,14 @@ public class Controller {
     private TextField radiusTextField;
     @FXML
     private Pane seedGrowthPane;
+    @FXML
+    private CheckBox gridLinesCheckBox;
 
     private CellularAutomaton cellularAutomaton;
     private GraphicsContext gc;
-    private boolean isAppRunning = false;
-    private int speedInMilliseconds = 50;
-    private Timer drawingTimer = null;
+    private volatile AtomicBoolean isAppRunning = new AtomicBoolean(false);
+    private volatile AtomicInteger speedInMilliseconds = new AtomicInteger(50);
+    private Thread drawingThread = null;
 
     @FXML
     public void initialize() {
@@ -91,11 +94,11 @@ public class Controller {
 
         showCellIdCheckBox.selectedProperty().addListener(e -> drawGrid(cellularAutomaton));
 
+        gridLinesCheckBox.selectedProperty().addListener(e -> drawGrid(cellularAutomaton));
+
         speedSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            speedInMilliseconds = (int)((1 / newValue.doubleValue()) * 5000.0);
+            speedInMilliseconds.set((int)((1 / newValue.doubleValue()) * 5000.0));
             speedPercentageText.setText(newValue.intValue() + "%");
-            if(isAppRunning)
-                startDrawing();
         });
 
         for (NeighborhoodType neighborhoodType: NeighborhoodType.values()) {
@@ -260,35 +263,21 @@ public class Controller {
     @FXML
     private void handleClearButtonAction(){
         cellularAutomaton.getGrid().clear();
+        gc.clearRect(0,0,canvas.getWidth(),canvas.getHeight());
         drawGrid(cellularAutomaton);
     }
 
     @FXML
     private void handleStartButtonAction() {
-        if(isAppRunning){
-            stopDrawing();
-            startButton.setText("Start");
+        isAppRunning.set(!isAppRunning.get());
+        if(isAppRunning.get()){
+            drawingThread = new Thread(new DrawingRunnable());
+            startButton.setText("Stop");
+            drawingThread.start();
         }
         else{
-            startDrawing();
-            startButton.setText("Stop");
-        }
-        isAppRunning = !isAppRunning;
-    }
-
-    private void startDrawing(){
-        stopDrawing();
-        drawingTimer = new Timer(speedInMilliseconds, e -> {
-            cellularAutomaton.calculateNextStep();
-            drawGrid(cellularAutomaton);
-        });
-        drawingTimer.start();
-    }
-
-    private void stopDrawing() {
-        if (drawingTimer != null) {
-            drawingTimer.stop();
-            drawingTimer = null;
+            drawingThread.interrupt();
+            startButton.setText("Start");
         }
     }
 
@@ -300,8 +289,8 @@ public class Controller {
     }
 
     private void drawGrid(CellularAutomaton cellularAutomaton){
-        if(cellularAutomaton.getIterations() % 30 == 0)
-            gc.clearRect(0,0,canvas.getWidth(),canvas.getHeight());
+//        if(cellularAutomaton.getIterations() % 30 == 0)
+//            gc.clearRect(0,0,canvas.getWidth(),canvas.getHeight());
         double width = canvas.getWidth();
         double height = canvas.getHeight();
         int rows = cellularAutomaton.getGrid().getHeight();
@@ -328,11 +317,29 @@ public class Controller {
                 }
             }
         }
-//        for (int i = 0; i < rows+1; i++) {
-//            gc.strokeLine(0, i * cellHeight,width,i * cellHeight);
-//        }
-//        for (int i = 0; i < columns+1; i++) {
-//            gc.strokeLine(i * cellWidth, 0,i *cellWidth,height);
-//        }
+        if(gridLinesCheckBox.isSelected()) {
+            for (int i = 0; i < rows + 1; i++) {
+                gc.strokeLine(0, i * cellHeight, width, i * cellHeight);
+            }
+            for (int i = 0; i < columns + 1; i++) {
+                gc.strokeLine(i * cellWidth, 0, i * cellWidth, height);
+            }
+        }
+    }
+
+    class DrawingRunnable implements Runnable{
+        @Override
+        public void run() {
+            while(isAppRunning.get() && !drawingThread.isInterrupted()){
+                try{
+                    cellularAutomaton.calculateNextStep();
+                    drawGrid(cellularAutomaton);
+                    Thread.sleep((speedInMilliseconds.get()));
+                }
+                catch(InterruptedException e){
+                    //
+                }
+            }
+        }
     }
 }
