@@ -7,9 +7,9 @@ import java.util.Random;
 import java.util.Vector;
 
 public class SeedGrowth extends CellularAutomaton {
-    private Random random;
-    private NeighborhoodType neighborhoodType;
-    private int numberOfSeeds;
+    Random random;
+    NeighborhoodType neighborhoodType;
+    int numberOfSeeds;
 
     public SeedGrowth() {
         super(0);
@@ -165,5 +165,13 @@ public class SeedGrowth extends CellularAutomaton {
             cellIdPool.add(neighboursVector.get(neighboursVector.size()-1).getId());
         }
         return cellIdPool.get(random.nextInt(cellIdPool.size()));
+    }
+
+    NeighborhoodType getNeighborhoodType() {
+        return neighborhoodType;
+    }
+
+    int getNumberOfSeeds() {
+        return numberOfSeeds;
     }
 }

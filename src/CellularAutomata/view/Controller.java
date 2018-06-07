@@ -67,6 +67,18 @@ public class Controller {
                 cellularAutomaton.calculateNextStep();
                 drawGrid(cellularAutomaton);
             }
+            else if(event.getCode() == KeyCode.M){
+                handleMonteCarlo();
+            }
+            else if(event.getCode() == KeyCode.COMMA){
+                if(seedIdComboBox.getSelectionModel().getSelectedIndex() == 0)
+                    seedIdComboBox.getSelectionModel().select(Integer.parseInt(numberOfSeedsTextField.getText()) - 1);
+                else
+                    seedIdComboBox.getSelectionModel().select(seedIdComboBox.getSelectionModel().getSelectedIndex() - 1);
+            }
+            else if(event.getCode() == KeyCode.PERIOD){
+                seedIdComboBox.getSelectionModel().select((seedIdComboBox.getSelectionModel().getSelectedIndex() + 1) % Integer.parseInt(numberOfSeedsTextField.getText()));
+            }
         });
 
         numberOfSeedsTextField.textProperty().addListener((observable, oldValue, newValue) ->{
@@ -104,7 +116,7 @@ public class Controller {
         for (NeighborhoodType neighborhoodType: NeighborhoodType.values()) {
             seedGrowthAlgorithmComboBox.getItems().add(neighborhoodType);
         }
-        seedGrowthAlgorithmComboBox.getSelectionModel().select(0);
+        seedGrowthAlgorithmComboBox.getSelectionModel().select(3);
         seedGrowthAlgorithmComboBox.valueProperty().addListener((observable, oldValue, newValue)->{
             cellularAutomaton = new SeedGrowth(Integer.parseInt(gridSizeTextArea.getText()),Integer.parseInt(numberOfSeedsTextField.getText()), newValue);
             loadCellularAutomatonData();
@@ -113,16 +125,19 @@ public class Controller {
         gc = canvas.getGraphicsContext2D();
 
         gameOfLifeMenuItem.setOnAction(e->{
+            handleClearButtonAction();
             cellularAutomaton = new GameOfLife();
             loadCellularAutomatonData();
         });
 
         seedGrowthMenuItem.setOnAction(e->{
+            handleClearButtonAction();
             cellularAutomaton = new SeedGrowth();
             loadCellularAutomatonData();
         });
 
         forestFireMenuItem.setOnAction(e->{
+            handleClearButtonAction();
             cellularAutomaton = new ForestFire();
             loadCellularAutomatonData();
         });
@@ -151,6 +166,29 @@ public class Controller {
         seedIdComboBox.getSelectionModel().select(0);
         currentConfigurationText.setText(cellularAutomaton.toString());
         drawGrid(cellularAutomaton);
+    }
+
+    private boolean isGridFull(CellularAutomaton cellularAutomaton){
+        for(int i = 0; i < cellularAutomaton.getGridSize(); i++){
+            for (int j = 0; j < cellularAutomaton.getGridSize(); j++) {
+                if(!cellularAutomaton.getGrid().getCell(i,j).isAlive())
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    @FXML
+    private void handleMonteCarlo(){
+        if(isGridFull(cellularAutomaton)){
+            if(cellularAutomaton.getClass() == MonteCarlo.class){
+                cellularAutomaton.calculateNextStep();
+                drawGrid(cellularAutomaton);
+            }
+            else if(cellularAutomaton.getClass() == SeedGrowth.class)
+                cellularAutomaton = new MonteCarlo((SeedGrowth)cellularAutomaton);
+        }
+        loadCellularAutomatonData();
     }
 
     @FXML

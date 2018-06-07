@@ -18,7 +18,7 @@
       <Button fx:id="startButton" layoutX="702.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleStartButtonAction" prefHeight="69.0" prefWidth="285.0" text="Start" />
       <Canvas fx:id="canvas" height="680.0" layoutX="14.0" layoutY="14.0" width="680.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="290.0" AnchorPane.topAnchor="30.0" />
       <Slider fx:id="speedSlider" layoutX="795.0" layoutY="122.0" min="10.0" prefHeight="14.0" prefWidth="191.0" value="40.0" />
-      <TextField fx:id="gridSizeTextArea" layoutX="795.0" layoutY="153.0" prefHeight="25.0" prefWidth="65.0" text="300" />
+      <TextField fx:id="gridSizeTextArea" layoutX="795.0" layoutY="153.0" prefHeight="25.0" prefWidth="65.0" text="100" />
       <MenuBar>
          <menus>
             <Menu mnemonicParsing="false" text="CA">
@@ -33,11 +33,11 @@
       <Text layoutX="724.0" layoutY="134.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Speed:" />
       <Text layoutX="742.0" layoutY="170.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Grid size:" />
       <Button layoutX="892.0" layoutY="153.0" mnemonicParsing="false" onAction="#handleClearButtonAction" prefHeight="25.0" prefWidth="88.0" text="Clear grid" />
-      <Text fx:id="currentConfigurationText" layoutX="702.0" layoutY="389.0" strokeType="OUTSIDE" strokeWidth="0.0" text="current config" wrappingWidth="191.00001454353333" />
+      <Text fx:id="currentConfigurationText" layoutX="702.0" layoutY="433.0" strokeType="OUTSIDE" strokeWidth="0.0" text="current config" wrappingWidth="191.00001454353333" />
       <Text fx:id="speedPercentageText" layoutX="766.0" layoutY="134.0" strokeType="OUTSIDE" strokeWidth="0.0" text="xx%" />
-      <Pane fx:id="seedGrowthPane" layoutX="652.0" layoutY="178.0" prefHeight="191.0" prefWidth="328.0">
+      <Pane fx:id="seedGrowthPane" layoutX="652.0" layoutY="178.0" prefHeight="232.0" prefWidth="328.0">
          <children>
-            <TextField fx:id="numberOfSeedsTextField" layoutX="153.0" layoutY="14.0" prefHeight="25.0" prefWidth="48.0" text="9" />
+            <TextField fx:id="numberOfSeedsTextField" layoutX="153.0" layoutY="14.0" prefHeight="25.0" prefWidth="48.0" text="5" />
             <Text layoutX="113.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Seeds:" />
             <ComboBox fx:id="seedIdComboBox" layoutX="262.0" layoutY="14.0" prefHeight="25.0" prefWidth="42.0" />
             <Text layoutX="213.0" layoutY="31.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Seed id:" />
@@ -48,7 +48,8 @@
             <CheckBox fx:id="showCellIdCheckBox" layoutX="246.0" layoutY="131.0" mnemonicParsing="false" text="seed IDs" />
             <ComboBox fx:id="seedGrowthAlgorithmComboBox" layoutX="143.0" layoutY="157.0" prefHeight="25.0" prefWidth="174.0" />
             <Text layoutX="48.0" layoutY="174.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Neighbourhood:" />
-            <CheckBox fx:id="gridLinesCheckBox" layoutX="153.0" layoutY="131.0" mnemonicParsing="false" text="grid lines" selected="true" />
+            <CheckBox fx:id="gridLinesCheckBox" layoutX="153.0" layoutY="131.0" mnemonicParsing="false" text="grid lines" />
+            <Button fx:id="monteCarloButton" layoutX="230.0" layoutY="193.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="88.0" text="Monte Carlo" onAction="#handleMonteCarlo" />
          </children>
       </Pane>
    </children>
