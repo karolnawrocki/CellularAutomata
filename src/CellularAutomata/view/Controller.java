@@ -14,6 +14,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.util.Collections;
+import java.util.Random;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -65,6 +66,11 @@ public class Controller {
         anchorPane.setOnKeyPressed((event) ->{
             if(event.getCode() == KeyCode.N){
                 cellularAutomaton.calculateNextStep();
+                drawGrid(cellularAutomaton);
+            }
+            else if(event.getCode() == KeyCode.F){
+                handleClearButtonAction();
+                fullGrid();
                 drawGrid(cellularAutomaton);
             }
             else if(event.getCode() == KeyCode.M){
@@ -230,6 +236,19 @@ public class Controller {
             cellularAutomaton.getGrid().getCell(currentCell.getRow(),currentCell.getColumn()).setId(i);
         }
         drawGrid(cellularAutomaton);
+    }
+
+    private void fullGrid(){
+        Random random = new Random();
+        int numberOfSeeds = Integer.parseInt(numberOfSeedsTextField.getText());
+        Cell currentCell;
+        for(int i = 0; i < cellularAutomaton.getGridSize(); i++){
+            for (int j = 0; j < cellularAutomaton.getGridSize(); j++) {
+                currentCell = cellularAutomaton.getGrid().getCell(i,j);
+                currentCell.setId(random.nextInt(numberOfSeeds));
+                currentCell.setAlive(true);
+            }
+        }
     }
 
     @FXML
